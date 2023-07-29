@@ -5,11 +5,13 @@ app = Flask(__name__)
 
 # Create a route decorator
 @app.route("/")
+# def index():
+#     return "<p>Hello, World!</p>"
 def index():
-    return "<p>Hello, World!</p>"
+    return render_template("index.html")
 
 # localhost:5000/user/John
-@app.route('user/<name>')
+@app.route('/user/<name>')
 def user(name):
     return f"<h1>Hello {name}</h1>"
 
