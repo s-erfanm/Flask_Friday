@@ -8,12 +8,14 @@ app = Flask(__name__)
 # def index():
 #     return "<p>Hello, World!</p>"
 def index():
-    return render_template("index.html")
+    creator_name = "s.erfan.m"
+    foods = ["Pizza", "Felafel", "Pasta", "Kebab"]
+    return render_template("index.html", creator_name=creator_name, all_foods=foods)
 
 # localhost:5000/user/John
 @app.route('/user/<name>')
 def user(name):
-    return f"<h1>Hello {name}</h1>"
+    return render_template("user.html", user=name)
 
 if __name__ == "__main__":
     app.run(debug=True)

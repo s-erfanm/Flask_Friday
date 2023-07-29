@@ -5,6 +5,14 @@
     <title>Flask</title>
 </head>
 <body>
-    <h1>hello from flask app</h1>
-</body>
+    <h3>hello from flask app</h3><br>
+    {%for food in all_foods%}
+    <h3> - {{food}} </h3>
+        {%if food == "Pizza":%}
+            <a>😋</a>
+        {%endif%}
+    {%endfor%}
+
+    </body>
+    <p> my name is {{creator_name|title}}</p>
 </html>
