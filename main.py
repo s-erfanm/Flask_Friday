@@ -28,7 +28,8 @@ class Users(db.Model):
 #     db.create_all()
 # CREATE A Form Class
 class SubmitForm(FlaskForm):
-    name = StringField("what is your name ? ", validators=[DataRequired()])
+    name = StringField("Name", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired()])
     submit = SubmitField("submit")
 
 
@@ -41,6 +42,24 @@ def index():
     foods = ["Pizza", "Felafel", "Pasta", "Kebab"]
 
     return render_template("index.html", creator_name=creator_name, all_foods=foods)
+
+@app.route('/user/add', methods=['GET', 'POST'])
+def add_user():
+    name = None
+    form = SubmitForm()
+    if form.validate_on_submit():
+        user = Users.query.filter_by(email=form.email.data).first()
+        if user is None:
+             user = Users(name=form.name.data, email=form.email.data)
+             db.session.add(user)
+             db.session.commit()
+        name = form.name.data
+        form.name.data = ''
+        form.email.data = ''
+        flash("User added successfully !!")
+    our_users = Users.query.order_by(Users.date_added)
+    return render_template("add_user.html", form=form, our_users=our_users)
+
 
 # localhost:5000/user/John
 @app.route('/user/<name>')
