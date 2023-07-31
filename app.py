@@ -24,6 +24,9 @@ migrate = Migrate(app, db)
 # $ flask db init
 # $ flask db migrate -m "Add users table" or flask db migrate
 # $ flask db upgrade
+
+
+
 # create a model
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -43,7 +46,6 @@ class UserForm(FlaskForm):
 	name = StringField("Name", validators=[DataRequired()])
 	email = StringField("Email", validators=[DataRequired()])
 	favorite_color = StringField("favorite_color")
-
 	submit = SubmitField("Submit")
 
 # Create a Form Class
@@ -69,7 +71,7 @@ def add_user():
 	if form.validate_on_submit():
 		user = Users.query.filter_by(email=form.email.data).first()
 		if user is None:
-			user = Users(name=form.name.data, email=form.email.data, favorite_color=form)
+			user = Users(name=form.name.data, email=form.email.data, favorite_color=form.favorite_color.data)
 			db.session.add(user)
 			db.session.commit()
 		name = form.name.data
@@ -100,18 +102,40 @@ def update(id):
 			flash("User Updated Successfully!")
 			return render_template("update.html",
 				form=form,
-				name_to_update = name_to_update)
+				name_to_update = name_to_update,
+				id=id)
 		except:
 			flash("Error!  Looks like there was a problem...try again!")
 			return render_template("update.html",
 				form=form,
-				name_to_update = name_to_update)
+				name_to_update = name_to_update,
+				id=id)
 	else:
 		return render_template("update.html",
 				form=form,
-				name_to_update = name_to_update)
+				name_to_update = name_to_update,
+				id=id)
 
-
+@app.route("/delete/<int:id>")
+def delete(id):
+	user_to_delete = Users.query.get_or_404(id)
+	name = None
+	form = UserForm()
+	try :
+		db.session.delete(user_to_delete)
+		db.session.commit()
+		flash("User Deleted Successfully !!! ")
+		our_users = Users.query.order_by(Users.date_added)
+		return render_template("add_user.html",
+							   form=form,
+							   name=name,
+							   our_users=our_users)
+	except:
+		flash(" whoops! There was a problem to delete user!")
+		return render_template("add_user.html",
+							   form=form,
+							   name=name,
+							   our_users=our_users)
 
 
 # CREATE custome error pages
